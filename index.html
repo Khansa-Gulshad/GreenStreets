@@ -1217,7 +1217,6 @@
                 const hypoResp = await fetch("data/hypo_adju.geojson");
                 if (hypoResp.ok) {
                     hypoData = await hypoResp.json();
-                    console.log('hypo_adju.geojson loaded:', hypoData.features ? hypoData.features.length + ' features' : 'no features array');
                 } else {
                     console.warn('hypo_adju.geojson HTTP', hypoResp.status);
                 }
@@ -1388,13 +1387,15 @@
             return content;
         }
         
+        let isTreeScenarioLayer = false;
+
         function onEachFeature(feature, layer) {
             layer.on({
                 mouseover: highlightStyle,
                 mouseout: resetHighlight,
                 click: function(e) {
                     let content;
-                    if (treeSpacing && streetFilter === 'poor') {
+                    if (isTreeScenarioLayer) {
                         content = createTreePopupContent(feature.properties);
                     } else if (streetFilter === 'poor') {
                         content = createPoorPopupContent(feature.properties);
@@ -1411,22 +1412,26 @@
         
         function renderStreets() {
             if (streetsLayer) map.removeLayer(streetsLayer);
+            isTreeScenarioLayer = false;
 
             // --- Tree scenario mode (hypo_adju.geojson) ---
             if (treeSpacing && streetFilter === 'poor') {
-                console.log('Tree scenario active:', treeSpacing, '| hypoData:', hypoData ? 'loaded' : 'NULL');
                 if (!hypoData || !hypoData.features || hypoData.features.length === 0) {
-                    console.error('Tree scenario: hypo_adju.geojson not available or empty. Showing poor streets instead.');
-                    // Fall through to poor streets below
-                } else {
+                    console.warn('Tree scenario: hypo_adju.geojson not loaded yet.');
+                    return;
+                }
+                isTreeScenarioLayer = true;
                 const spacingKey = 'additional_' + treeSpacing;
-                // Only show streets where additional trees > 0
                 const features = hypoData.features.filter(f =>
                     f.properties && f.properties[spacingKey] != null && f.properties[spacingKey] > 0
                 );
-                console.log('Tree scenario features:', features.length, '/', hypoData.features.length, 'pass filter for', spacingKey);
                 const vals = features.map(f => f.properties[spacingKey]);
-                const treeMax = vals.length > 0 ? Math.max(...vals) : 1;
+                let treeMax = 1;
+                let treeMin = 0;
+                if (vals.length > 0) {
+                    treeMax = vals.reduce((a, b) => a > b ? a : b, vals[0]);
+                    treeMin = vals.reduce((a, b) => a < b ? a : b, vals[0]);
+                }
 
                 const filteredData = { type: 'FeatureCollection', features: features };
                 streetsLayer = L.geoJSON(filteredData, {
@@ -1460,14 +1465,13 @@
                 document.getElementById('statVisible').textContent = vals.length;
                 if (vals.length > 0) {
                     const mean = vals.reduce((a, b) => a + b, 0) / vals.length;
-                    const treeMin = Math.min(...vals);
                     document.getElementById('statMean').textContent = mean.toFixed(1);
                     document.getElementById('statRange').textContent = treeMin + ' - ' + treeMax;
                     const numBins = 15;
                     const binSize = (treeMax - treeMin) / numBins || 1;
                     const bins = new Array(numBins).fill(0);
                     vals.forEach(v => { bins[Math.min(Math.floor((v - treeMin) / binSize), numBins - 1)]++; });
-                    const maxBin = Math.max(...bins);
+                    const maxBin = bins.reduce((a, b) => a > b ? a : b, 0);
                     if (maxBin > 0) {
                         const barWidth = Math.ceil(canvas.width / numBins);
                         const heightScale = canvas.height / maxBin;
@@ -1481,7 +1485,6 @@
                     document.getElementById('statRange').textContent = '-';
                 }
                 return;
-                } // end else (hypoData available)
             }
 
             // --- Existing-condition modes (streets.geojson) ---
