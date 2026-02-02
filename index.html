@@ -898,19 +898,28 @@
                 onEachFeature: function(feature, layer) {
                     layer.on('click', function(e) {
                         const props = feature.properties;
-                        const gviLabel = clsLabels[props.gvi_cls] || '?';
-                        const iaiLabel = clsLabels[props.iai_cls] || '?';
-                        const interp = biClassInterpretations[props.bi_class] || '';
-
-                        let content = '<div class="popup-title">' + props.name + '</div>';
+                        const districtName = props.name || props.nazwa || 'District';
+                        let content = '<div class="popup-title">' + districtName + '</div>';
                         content += '<div class="popup-info">';
-                        content += '<span class="popup-label">GVI:</span>';
-                        content += '<span class="popup-value">' + (props.avg_gvi_w != null ? props.avg_gvi_w.toFixed(4) : 'N/A') + ' (' + gviLabel + ')</span>';
-                        content += '<span class="popup-label">IAI:</span>';
-                        content += '<span class="popup-value">' + (props.avg_iai_w != null ? props.avg_iai_w.toFixed(4) : 'N/A') + ' (' + iaiLabel + ')</span>';
-                        content += '</div>';
-                        if (interp) {
-                            content += '<div style="margin-top:10px;font-size:12px;color:#b0b0b0;font-style:italic;">' + interp + '</div>';
+
+                        if (currentIndex === 'OSI') {
+                            content += '<span class="popup-label">Avg OSI:</span>';
+                            content += '<span class="popup-value">' + (props.avg_osi_w != null ? props.avg_osi_w.toFixed(4) : 'N/A') + '</span>';
+                            content += '<span class="popup-label">Total Length:</span>';
+                            content += '<span class="popup-value">' + (props.total_length_m / 1000).toFixed(2) + ' km</span>';
+                            content += '</div>';
+                        } else {
+                            const gviLabel = clsLabels[props.gvi_cls] || '?';
+                            const iaiLabel = clsLabels[props.iai_cls] || '?';
+                            const interp = biClassInterpretations[props.bi_class] || '';
+                            content += '<span class="popup-label">GVI:</span>';
+                            content += '<span class="popup-value">' + (props.avg_gvi_w != null ? props.avg_gvi_w.toFixed(4) : 'N/A') + ' (' + gviLabel + ')</span>';
+                            content += '<span class="popup-label">IAI:</span>';
+                            content += '<span class="popup-value">' + (props.avg_iai_w != null ? props.avg_iai_w.toFixed(4) : 'N/A') + ' (' + iaiLabel + ')</span>';
+                            content += '</div>';
+                            if (interp) {
+                                content += '<div style="margin-top:10px;font-size:12px;color:#b0b0b0;font-style:italic;">' + interp + '</div>';
+                            }
                         }
                         L.popup().setLatLng(e.latlng).setContent(content).openOn(map);
                     });
