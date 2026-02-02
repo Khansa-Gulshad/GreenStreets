@@ -1215,7 +1215,12 @@
             // Hypothetical tree planting data (poor streets only)
             try {
                 const hypoResp = await fetch("data/hypo_adju.geojson");
-                if (hypoResp.ok) hypoData = await hypoResp.json();
+                if (hypoResp.ok) {
+                    hypoData = await hypoResp.json();
+                    console.log('hypo_adju.geojson loaded:', hypoData.features ? hypoData.features.length + ' features' : 'no features array');
+                } else {
+                    console.warn('hypo_adju.geojson HTTP', hypoResp.status);
+                }
             } catch (e) {
                 console.warn("hypo_adju.geojson not available:", e.message);
             }
@@ -1408,12 +1413,18 @@
             if (streetsLayer) map.removeLayer(streetsLayer);
 
             // --- Tree scenario mode (hypo_adju.geojson) ---
-            if (treeSpacing && streetFilter === 'poor' && hypoData && hypoData.features) {
+            if (treeSpacing && streetFilter === 'poor') {
+                console.log('Tree scenario active:', treeSpacing, '| hypoData:', hypoData ? 'loaded' : 'NULL');
+                if (!hypoData || !hypoData.features || hypoData.features.length === 0) {
+                    console.error('Tree scenario: hypo_adju.geojson not available or empty. Showing poor streets instead.');
+                    // Fall through to poor streets below
+                } else {
                 const spacingKey = 'additional_' + treeSpacing;
                 // Only show streets where additional trees > 0
                 const features = hypoData.features.filter(f =>
                     f.properties && f.properties[spacingKey] != null && f.properties[spacingKey] > 0
                 );
+                console.log('Tree scenario features:', features.length, '/', hypoData.features.length, 'pass filter for', spacingKey);
                 const vals = features.map(f => f.properties[spacingKey]);
                 const treeMax = vals.length > 0 ? Math.max(...vals) : 1;
 
@@ -1470,6 +1481,7 @@
                     document.getElementById('statRange').textContent = '-';
                 }
                 return;
+                } // end else (hypoData available)
             }
 
             // --- Existing-condition modes (streets.geojson) ---
