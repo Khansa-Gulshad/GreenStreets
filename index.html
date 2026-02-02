@@ -865,6 +865,19 @@
             return interpolateColor(scheme.colors[lowerIndex], scheme.colors[upperIndex], factor);
         }
         
+        const clsLabels = ['Low', 'Medium', 'High'];
+        const biClassInterpretations = [
+            'Low greenery, low imperviousness (sparse / transitional)',
+            'Low greenery, moderate sealing',
+            'Low greenery, high imperviousness (critical zone)',
+            'Moderate greenery, permeable',
+            'Typical mixed urban fabric',
+            'Sealed with some greenery',
+            'Green & permeable (best case)',
+            'Green but moderately sealed',
+            'Green but heavily built-up'
+        ];
+
         function renderDistricts() {
             if (districtsLayer) map.removeLayer(districtsLayer);
             
@@ -885,24 +898,20 @@
                 onEachFeature: function(feature, layer) {
                     layer.on('click', function(e) {
                         const props = feature.properties;
+                        const gviLabel = clsLabels[props.gvi_cls] || '?';
+                        const iaiLabel = clsLabels[props.iai_cls] || '?';
+                        const interp = biClassInterpretations[props.bi_class] || '';
+
                         let content = '<div class="popup-title">' + props.name + '</div>';
                         content += '<div class="popup-info">';
-                        
-                        // Show only the currently selected index
-                        if (currentIndex === 'GVI') {
-                            content += '<span class="popup-label">Avg GVI:</span>';
-                            content += '<span class="popup-value">' + (props.avg_gvi_w ? props.avg_gvi_w.toFixed(4) : 'N/A') + '</span>';
-                        } else if (currentIndex === 'IAI') {
-                            content += '<span class="popup-label">Avg IAI:</span>';
-                            content += '<span class="popup-value">' + (props.avg_iai_w ? props.avg_iai_w.toFixed(4) : 'N/A') + '</span>';
-                        } else if (currentIndex === 'OSI') {
-                            content += '<span class="popup-label">Avg OSI:</span>';
-                            content += '<span class="popup-value">' + (props.avg_osi_w ? props.avg_osi_w.toFixed(4) : 'N/A') + '</span>';
-                        }
-                        
-                        content += '<span class="popup-label">Total Length:</span>';
-                        content += '<span class="popup-value">' + (props.total_length_m / 1000).toFixed(2) + ' km</span>';
+                        content += '<span class="popup-label">GVI:</span>';
+                        content += '<span class="popup-value">' + (props.avg_gvi_w != null ? props.avg_gvi_w.toFixed(4) : 'N/A') + ' (' + gviLabel + ')</span>';
+                        content += '<span class="popup-label">IAI:</span>';
+                        content += '<span class="popup-value">' + (props.avg_iai_w != null ? props.avg_iai_w.toFixed(4) : 'N/A') + ' (' + iaiLabel + ')</span>';
                         content += '</div>';
+                        if (interp) {
+                            content += '<div style="margin-top:10px;font-size:12px;color:#b0b0b0;font-style:italic;">' + interp + '</div>';
+                        }
                         L.popup().setLatLng(e.latlng).setContent(content).openOn(map);
                     });
                     layer.on('mouseover', function(e) {
