@@ -647,7 +647,7 @@
         .graph-toggle-btn {
             position: absolute;
             top: 20px;
-            left: 20px;
+            left: 56px;
             background: rgba(20, 20, 20, 0.95);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: #e0e0e0;
@@ -787,7 +787,7 @@
     </div>
     
     <!-- Graph Toggle Button -->
-    <button id="graphToggleBtn" class="graph-toggle-btn" onclick="openHistogram()">Distribution</button>
+    <button id="graphToggleBtn" class="graph-toggle-btn" onclick="openHistogram()">Graph</button>
 
     <!-- Zoom Banner -->
     <div id="zoomBanner" class="zoom-banner hidden">Zoom in to show the street network</div>
@@ -1017,6 +1017,11 @@
         function openHistogram() {
             document.getElementById('histogramPanel').classList.remove('hidden');
             document.getElementById('graphToggleBtn').classList.add('hidden');
+            if (currentScale === 'district') {
+                updateHistogramDistrict();
+            } else if (currentScale === 'street') {
+                renderStreets();
+            }
         }
 
         function closeHistogram() {
