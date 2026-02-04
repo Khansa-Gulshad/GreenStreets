@@ -347,71 +347,69 @@
             color: #66bd63;
         }
         
-        .legend {
-            margin-top: 24px;
-            padding-top: 18px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        .legend-panel {
+            position: absolute;
+            bottom: 30px;
+            left: 20px;
+            background: rgba(20, 20, 20, 0.95);
+            padding: 14px 16px;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            width: 240px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
-        .legend h4 {
-            margin: 0 0 12px 0;
-            font-size: 13px;
+
+        .legend-panel h4 {
+            margin: 0 0 8px 0;
+            font-size: 12px;
             font-weight: 600;
             color: #b0b0b0;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        
-        .legend-scale {
-            height: 24px;
-            border-radius: 6px;
+
+        .legend-panel .legend-scale {
+            height: 14px;
+            border-radius: 4px;
             overflow: hidden;
-            margin-bottom: 8px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
-        .legend-labels {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #909090;
-            font-family: 'JetBrains Mono', monospace;
-        }
-        
-        .legend-note {
-            margin-top: 10px;
-            font-size: 11px;
-            color: #707070;
-            font-style: italic;
-        }
 
-        .legend-interp {
+        .legend-panel .legend-labels {
             display: flex;
             justify-content: space-between;
-            margin-top: 6px;
             font-size: 10px;
-            color: #808080;
-            font-style: italic;
+            color: #707070;
+            font-family: 'JetBrains Mono', monospace;
+            margin-top: 3px;
         }
 
-        .legend-interp span:last-child {
-            text-align: right;
-        }
-
-        .legend-interp span:nth-child(2) {
+        .legend-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
             text-align: center;
+            margin-top: 8px;
         }
 
-        .legend-district-note {
-            margin-top: 10px;
-            padding: 10px;
-            background: rgba(100, 181, 246, 0.08);
-            border: 1px solid rgba(100, 181, 246, 0.15);
-            border-radius: 6px;
+        .legend-grid .lg-top {
             font-size: 11px;
-            color: #909090;
-            line-height: 1.5;
-            display: none;
+            font-weight: 500;
+            color: #c0c0c0;
+            line-height: 1.4;
+        }
+
+        .legend-grid .lg-bot {
+            font-size: 10px;
+            color: #707070;
+            line-height: 1.4;
+        }
+
+        .legend-panel .legend-note {
+            margin-top: 8px;
+            font-size: 10px;
+            color: #606060;
+            font-style: italic;
         }
 
         .explore-btn {
@@ -775,6 +773,10 @@
             .histogram-panel {
                 width: 320px;
             }
+            .legend-panel {
+                width: 200px;
+                padding: 10px 12px;
+            }
             .info-content {
                 margin: 20px;
                 padding: 28px;
@@ -883,6 +885,25 @@
     <!-- Info Button -->
     <button class="info-button" onclick="showInfo()">i</button>
     
+    <!-- Legend Panel (left side) -->
+    <div id="legendPanel" class="legend-panel">
+        <h4 id="legend-title">Green View Index</h4>
+        <div class="legend-scale" id="legend-gradient"></div>
+        <div class="legend-labels">
+            <span id="legend-min">0.000</span>
+            <span id="legend-max">0.993</span>
+        </div>
+        <div class="legend-grid" id="legend-grid">
+            <span class="lg-top">Low</span>
+            <span class="lg-top">Medium</span>
+            <span class="lg-top">High</span>
+            <span class="lg-bot">greenery</span>
+            <span class="lg-bot">greenery</span>
+            <span class="lg-bot">greenery</span>
+        </div>
+        <div class="legend-note">Gray = No data</div>
+    </div>
+
     <!-- Control Panel -->
     <div class="control-panel">
         <h3>Street-Level Analysis</h3>
@@ -1020,24 +1041,6 @@
             </div>
         </div>
         
-        <div class="legend">
-            <h4 id="legend-title">Green View Index</h4>
-            <div class="legend-scale" id="legend-gradient"></div>
-            <div class="legend-labels">
-                <span id="legend-min">Low</span>
-                <span id="legend-max">High</span>
-            </div>
-            <div class="legend-interp" id="legend-interp">
-                <span>Low visible greenery</span>
-                <span>Moderate street greenery</span>
-                <span>High visible greenery</span>
-            </div>
-            <div class="legend-note">Gray = No data</div>
-            <div class="legend-district-note" id="legend-district-note">
-                District colors show length-weighted averages of street-level values. Longer streets influence the district color more.
-            </div>
-        </div>
-        
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -1064,11 +1067,12 @@
 	let districtStats;  // computed after districts load
         const indexStats = {"GVI": {"mean": 0.2233094016090199, "min": 0.0, "max": 0.9927}, "IAI": {"mean": 0.3547145575195255, "min": 0.0, "max": 0.9955}, "OSI": {"mean": 0.08030176757296377, "min": 0.0, "max": 0.6416}};
         
-        const legendInterpText = {
-            GVI: ['Low visible greenery', 'Moderate street greenery', 'High visible greenery'],
-            IAI: ['Permeable / less built-up', 'Mixed surfaces', 'Highly impervious'],
-            OSI: ['Little open space', 'Some open terrain', 'Large visible open space'],
-            tree: ['Limited planting potential', 'Moderate planting opportunity', 'High planting potential']
+        const legendGridText = {
+            GVI: { top: ['Low', 'Medium', 'High'], bot: ['greenery', 'greenery', 'greenery'] },
+            IAI: { top: ['Low', 'Medium', 'High'], bot: ['impervious', 'impervious', 'impervious'] },
+            OSI: { top: ['Low', 'Medium', 'High'], bot: ['open space', 'open space', 'open space'] },
+            tree: { top: ['Few', 'Moderate', 'Many'], bot: ['trees', 'trees', 'trees'] },
+            district: { top: ['Lower', 'Average', 'Higher'], bot: ['value', 'value', 'value'] }
         };
 
         const colorSchemes = {
@@ -1353,11 +1357,15 @@
             document.getElementById('legend-min').textContent = stats.min.toFixed(3);
             document.getElementById('legend-max').textContent = stats.max.toFixed(3);
 
-            var interp = legendInterpText[currentIndex];
-            var interpEl = document.getElementById('legend-interp');
-            interpEl.innerHTML = '<span>' + interp[0] + '</span><span>' + interp[1] + '</span><span>' + interp[2] + '</span>';
-
-            document.getElementById('legend-district-note').style.display = currentScale === 'district' ? 'block' : 'none';
+            var grid = currentScale === 'district' ? legendGridText.district : legendGridText[currentIndex];
+            var gridEl = document.getElementById('legend-grid');
+            gridEl.innerHTML =
+                '<span class="lg-top">' + grid.top[0] + '</span>' +
+                '<span class="lg-top">' + grid.top[1] + '</span>' +
+                '<span class="lg-top">' + grid.top[2] + '</span>' +
+                '<span class="lg-bot">' + grid.bot[0] + '</span>' +
+                '<span class="lg-bot">' + grid.bot[1] + '</span>' +
+                '<span class="lg-bot">' + grid.bot[2] + '</span>';
         }
         
         function updateScale() {
@@ -1653,9 +1661,14 @@
                     'linear-gradient(to right, #fee08b, #d9ef8b, #a6d96a, #66bd63, #1a9850, #006837)';
                 document.getElementById('legend-min').textContent = '0';
                 document.getElementById('legend-max').textContent = String(treeMax);
-                var tInterp = legendInterpText.tree;
-                document.getElementById('legend-interp').innerHTML = '<span>' + tInterp[0] + '</span><span>' + tInterp[1] + '</span><span>' + tInterp[2] + '</span>';
-                document.getElementById('legend-district-note').style.display = 'none';
+                var tGrid = legendGridText.tree;
+                document.getElementById('legend-grid').innerHTML =
+                    '<span class="lg-top">' + tGrid.top[0] + '</span>' +
+                    '<span class="lg-top">' + tGrid.top[1] + '</span>' +
+                    '<span class="lg-top">' + tGrid.top[2] + '</span>' +
+                    '<span class="lg-bot">' + tGrid.bot[0] + '</span>' +
+                    '<span class="lg-bot">' + tGrid.bot[1] + '</span>' +
+                    '<span class="lg-bot">' + tGrid.bot[2] + '</span>';
 
                 // Histogram for tree data
                 const canvas = document.getElementById('histogram');
