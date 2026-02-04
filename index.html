@@ -141,33 +141,136 @@
             color: #c0c0c0;
             margin-bottom: 10px;
         }
-        
-        .index-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .index-card {
+
+        /* Info Panel Cards */
+        .info-card {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 10px;
-            padding: 16px;
+            padding: 16px 18px;
+            margin-bottom: 10px;
+            transition: border-color 0.2s;
         }
-        
-        .index-card h4 {
-            font-size: 14px;
+
+        .info-card:hover {
+            border-color: rgba(100, 181, 246, 0.3);
+        }
+
+        .info-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .info-card-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .info-card-title {
+            font-size: 15px;
             font-weight: 600;
-            color: #64B5F6;
+            color: #ffffff;
+        }
+
+        .info-card-summary {
+            font-size: 14px;
+            color: #b0b0b0;
+            line-height: 1.5;
             margin-bottom: 8px;
         }
-        
-        .index-card p {
+
+        .info-card-summary strong {
+            color: #e0e0e0;
+        }
+
+        .info-card-detail {
+            display: none;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 8px;
             font-size: 13px;
-            line-height: 1.5;
-            color: #b0b0b0;
+            line-height: 1.6;
+            color: #909090;
+        }
+
+        .info-card-detail.open {
+            display: block;
+        }
+
+        .info-card-detail ul {
+            list-style: none;
+            padding: 0;
+            margin: 6px 0;
+        }
+
+        .info-card-detail ul li {
+            padding: 3px 0;
+        }
+
+        .info-card-detail p {
+            font-size: 13px;
+            color: #909090;
+            margin-bottom: 4px;
+        }
+
+        .info-card-detail strong {
+            color: #c0c0c0;
+        }
+
+        .info-toggle-link {
+            background: none;
+            border: none;
+            color: #64B5F6;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            transition: color 0.2s;
+        }
+
+        .info-toggle-link:hover {
+            color: #90CAF9;
+        }
+
+        /* Step Guide */
+        .step-guide {
+            background: rgba(100, 181, 246, 0.06);
+            border: 1px solid rgba(100, 181, 246, 0.15);
+            border-radius: 10px;
+            padding: 16px 18px;
+            margin-bottom: 24px;
+        }
+
+        .step-guide h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .step-guide ol {
+            list-style: none;
+            padding: 0;
             margin: 0;
+        }
+
+        .step-guide ol li {
+            font-size: 14px;
+            color: #c0c0c0;
+            padding: 4px 0;
+            line-height: 1.5;
+        }
+
+        .info-section-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #64B5F6;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
         }
         
         /* Control Panel */
@@ -799,63 +902,117 @@
     <div id="infoModal" class="info-modal">
         <div class="info-content">
             <div class="info-header">
-                <h2>About Street-Level Analysis</h2>
+                <h2>🗺️ About this map</h2>
                 <button class="close-btn" onclick="closeInfo()">×</button>
             </div>
-            
-            <div class="info-section">
-                <p>This map visualizes street-level greening conditions and future planting potential for Gdańsk using street-view imagery analysis. Google Street View images were collected along the street network and analysed using deep learning–based image segmentation to quantify visible urban elements.</p>
+
+            <p style="font-size:15px;color:#c0c0c0;line-height:1.6;margin-bottom:20px;">
+                This interactive map shows what streets look like at eye level in Gdańsk — and where more greenery could be added in the future.<br>
+                It is based on street-view images analysed using AI image segmentation.
+            </p>
+
+            <!-- How to explore -->
+            <div class="step-guide">
+                <h3>👣 How to explore</h3>
+                <ol>
+                    <li>1️⃣ Zoom out → compare districts</li>
+                    <li>2️⃣ Zoom in → explore individual streets</li>
+                    <li>3️⃣ Switch indices → greenery, imperviousness, open space</li>
+                    <li>4️⃣ Highlight poor streets → explore tree planting scenarios</li>
+                </ol>
             </div>
-            
-            <div class="info-section">
-                <h3>The Indices</h3>
-                <div class="index-grid">
-                    <div class="index-card">
-                        <h4> Green View Index (GVI)</h4>
-                        <p>Measures the proportion of visible vegetation in street-view imagery. Higher values indicate more greenery visible from street level.</p>
-                    </div>
-                    <div class="index-card">
-                        <h4> Impervious Area Index (IAI)</h4>
-                        <p>Quantifies impervious surfaces (roads, pavement) visible in street views. Higher values indicate more built-up environments.</p>
-                    </div>
-                    <div class="index-card">
-                        <h4> Open Space Index (OSI)</h4>
-                        <p>Reflects visible open, non-built, non-vegetated areas (bare ground, terrain). Higher values indicate more open space availability.</p>
-                    </div>
+
+            <!-- Street-level indices -->
+            <div class="info-section-label">📊 Street-level indices</div>
+
+            <div class="info-card">
+                <div class="info-card-header">
+                    <span class="info-card-icon">🌳</span>
+                    <span class="info-card-title">Green View Index (GVI)</span>
+                </div>
+                <div class="info-card-summary">How green does a street look to a pedestrian?</div>
+                <button class="info-toggle-link" data-label="More info ▸" onclick="toggleDetail(this)">More info ▸</button>
+                <div class="info-card-detail">
+                    <ul>
+                        <li><strong>High</strong> → lots of visible trees and vegetation</li>
+                        <li><strong>Low</strong> → little visible greenery</li>
+                    </ul>
                 </div>
             </div>
-            
-            <div class="info-section">
-                <h3>Tree Planting Potential on Poor Streets</h3>
-                <p>
-                    In addition to assessing existing street-level greenery, this map explores
-                    the potential for future tree planting on streets with low visual greenery.
-                </p>
-                <p>
-                    For these streets, a predictive model estimates how many trees could
-                    realistically be added, considering street length, existing trees, and
-                    physical planting constraints.
-                </p>
-                <p>
-                    Users can explore three planting scenarios based on different spacing
-                    assumptions (5 m, 10 m, and 15 m between trees).
-                </p>
+
+            <div class="info-card">
+                <div class="info-card-header">
+                    <span class="info-card-icon">🧱</span>
+                    <span class="info-card-title">Impervious Area Index (IAI)</span>
+                </div>
+                <div class="info-card-summary">How built-up does the street appear?</div>
+                <button class="info-toggle-link" data-label="More info ▸" onclick="toggleDetail(this)">More info ▸</button>
+                <div class="info-card-detail">
+                    <ul>
+                        <li><strong>High</strong> → roads, pavements, buildings dominate</li>
+                        <li><strong>Low</strong> → more permeable surroundings</li>
+                    </ul>
+                </div>
             </div>
 
-            <div class="info-section">
-                <h3>District vs. Street Scale</h3>
-                <p>
-                    At the district scale, colors represent the average street-level conditions
-                    within each district. Values are calculated as length-weighted averages,
-                    meaning longer street segments contribute more to the district value than
-                    shorter ones.
-                </p>
-                <p>
-                    Zoom in to see individual street segments and their specific index values.
-                </p>
+            <div class="info-card">
+                <div class="info-card-header">
+                    <span class="info-card-icon">⬜</span>
+                    <span class="info-card-title">Open Space Index (OSI)</span>
+                </div>
+                <div class="info-card-summary">How much open, non-built space is visible?</div>
+                <button class="info-toggle-link" data-label="More info ▸" onclick="toggleDetail(this)">More info ▸</button>
+                <div class="info-card-detail">
+                    <ul>
+                        <li><strong>High</strong> → open ground or terrain</li>
+                        <li><strong>Low</strong> → compact urban form</li>
+                    </ul>
+                </div>
             </div>
 
-            <button class="explore-btn" onclick="closeInfo()">Explore the map</button>
+            <!-- Tree planting potential (collapsible, closed by default) -->
+            <div class="info-card" style="margin-top:18px;">
+                <div class="info-card-header">
+                    <span class="info-card-icon">🌱</span>
+                    <span class="info-card-title">Tree planting potential</span>
+                </div>
+                <div class="info-card-summary">Where could more trees be planted?</div>
+                <button class="info-toggle-link" data-label="Learn more ▸" onclick="toggleDetail(this)">Learn more ▸</button>
+                <div class="info-card-detail">
+                    <p>Some streets have very low visible greenery.</p>
+                    <p>For these streets, the map estimates:</p>
+                    <ul>
+                        <li>how many trees already exist</li>
+                        <li>how many could realistically be added</li>
+                    </ul>
+                    <p>Explore three spacing scenarios:</p>
+                    <ul>
+                        <li>🌱 Dense (5 m spacing)</li>
+                        <li>🌱 Moderate (10 m spacing)</li>
+                        <li>🌱 Conservative (15 m spacing)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- District vs street view -->
+            <div class="info-card" style="margin-top:18px;">
+                <div class="info-card-header">
+                    <span class="info-card-icon">🏙️</span>
+                    <span class="info-card-title">District vs street view</span>
+                </div>
+                <div class="info-card-summary">
+                    <strong>District view</strong> → colors show average street conditions per district<br>
+                    <strong>Street view</strong> → colors show individual street segments
+                </div>
+                <button class="info-toggle-link" data-label="More info ▸" onclick="toggleDetail(this)">More info ▸</button>
+                <div class="info-card-detail">
+                    <p>District values are length-weighted:</p>
+                    <p style="letter-spacing:2px;">▬ ▬ ▬ longer streets influence district color more.</p>
+                    <p>👉 Zoom in to see street-level detail.</p>
+                </div>
+            </div>
+
+            <button class="explore-btn" style="margin-top:24px;" onclick="closeInfo()">Explore the map →</button>
         </div>
     </div>
     
@@ -1099,6 +1256,12 @@
 
         function closeInfo() {
             document.getElementById('infoModal').classList.add('hidden');
+        }
+
+        function toggleDetail(btn) {
+            var detail = btn.nextElementSibling;
+            var isOpen = detail.classList.toggle('open');
+            btn.textContent = isOpen ? '◂ Less' : btn.getAttribute('data-label');
         }
 
         function openHistogram() {
