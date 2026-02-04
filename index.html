@@ -181,6 +181,7 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
             z-index: 1000;
             min-width: 320px;
+            max-width: 340px;
             max-height: calc(100vh - 40px);
             overflow-y: auto;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -511,33 +512,6 @@
             padding: 12px;
         }
         
-        /* Info Button */
-        .info-button {
-            position: absolute;
-            bottom: 80px;
-            right: 20px;
-            background: rgba(100, 181, 246, 0.9);
-            border: none;
-            color: white;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 24px;
-            font-weight: 700;
-            box-shadow: 0 4px 16px rgba(100, 181, 246, 0.4);
-            z-index: 999;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .info-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 24px rgba(100, 181, 246, 0.6);
-        }
-        
         /* Popup Styles */
         .leaflet-popup-content-wrapper {
             background: rgba(20, 20, 20, 0.97);
@@ -605,6 +579,10 @@
             border: 1px solid rgba(100, 181, 246, 0.3);
         }
         
+        path.leaflet-interactive {
+            transition: stroke-width 0.15s ease, stroke-opacity 0.15s ease;
+        }
+
         .leaflet-control-attribution {
             background: rgba(20, 20, 20, 0.85) !important;
             color: #a0a0a0 !important;
@@ -910,9 +888,6 @@
         </div>
         <canvas id="histogram" class="histogram-canvas"></canvas>
     </div>
-    
-    <!-- Info Button -->
-    <button class="info-button" onclick="showInfo()">i</button>
     
     <!-- Legend Panel (left side) -->
     <div id="legendPanel" class="legend-panel">
@@ -1555,7 +1530,7 @@
         function highlightStyle(e) {
             const layer = e.target;
             layer.setStyle({
-                weight: 5,
+                weight: 4,
                 opacity: 1
             });
             layer.bringToFront();
