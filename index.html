@@ -245,6 +245,24 @@
             color: #c0c0c0;
         }
 
+        .color-preview {
+            margin: 8px 0 4px;
+        }
+
+        .color-preview-bar {
+            height: 14px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .color-preview-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #808080;
+            margin-top: 3px;
+        }
+
         .info-toggle-link {
             background: none;
             border: none;
@@ -963,6 +981,10 @@
                         <li><strong>High</strong> → lots of visible trees and vegetation</li>
                         <li><strong>Low</strong> → little visible greenery</li>
                     </ul>
+                    <div class="color-preview">
+                        <div class="color-preview-bar" style="background: linear-gradient(to right, #d73027, #f46d43, #fdae61, #fee08b, #d9ef8b, #a6d96a, #66bd63, #1a9850);"></div>
+                        <div class="color-preview-labels"><span>Low greenery</span><span>High greenery</span></div>
+                    </div>
                 </div>
             </div>
 
@@ -978,6 +1000,10 @@
                         <li><strong>High</strong> → roads, pavements, buildings dominate</li>
                         <li><strong>Low</strong> → more permeable surroundings</li>
                     </ul>
+                    <div class="color-preview">
+                        <div class="color-preview-bar" style="background: linear-gradient(to right, #1a9850, #66bd63, #a6d96a, #d9ef8b, #fee08b, #fdae61, #f46d43, #d73027);"></div>
+                        <div class="color-preview-labels"><span>Low imperviousness</span><span>High imperviousness</span></div>
+                    </div>
                 </div>
             </div>
 
@@ -993,6 +1019,10 @@
                         <li><strong>High</strong> → open ground or terrain</li>
                         <li><strong>Low</strong> → compact urban form</li>
                     </ul>
+                    <div class="color-preview">
+                        <div class="color-preview-bar" style="background: linear-gradient(to right, #d73027, #f46d43, #fdae61, #fee08b, #e0f3f8, #abd9e9, #74add1, #4575b4);"></div>
+                        <div class="color-preview-labels"><span>Low open space</span><span>High open space</span></div>
+                    </div>
                 </div>
             </div>
 
@@ -1017,6 +1047,10 @@
                         <li>🌱 Moderate (10 m spacing)</li>
                         <li>🌱 Conservative (15 m spacing)</li>
                     </ul>
+                    <div class="color-preview">
+                        <div class="color-preview-bar" style="background: linear-gradient(to right, #fee08b, #d9ef8b, #a6d96a, #66bd63, #1a9850, #006837);"></div>
+                        <div class="color-preview-labels"><span>Few trees</span><span>Many trees</span></div>
+                    </div>
                 </div>
             </div>
 
